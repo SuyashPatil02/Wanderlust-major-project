@@ -1,3 +1,4 @@
+const mongoose = require("mongoose");
 const Listing = require("../models/listing.js");
 const User = require("../models/user.js");
 
@@ -53,7 +54,7 @@ module.exports.showListing = async (req, res) => {
         .populate({ path: "reviews", populate: { path: "author" } })
         .populate("owner");
 
-    if (!listing) {
+    if (!listing || !listing.owner) {
         req.flash("error", "Listing you requested does not exist.");
         return res.redirect("/listings");
     }
@@ -129,14 +130,24 @@ module.exports.destroyListing = async (req, res) => {
 
 module.exports.addFavorite = async (req, res) => {
     const { id } = req.params;
-    await User.findByIdAndUpdate(req.user._id, { $addToSet: { favorites: id } });
+    if (!mongoose.isValidObjectId(id)) {
+        req.flash("error", "Invalid listing id.");
+        return res.redirect("/listings");
+    }
+
+    await User.findByIdAndUpdate(req.user._id, { $addToSet: { favorites: new mongoose.Types.ObjectId(id) } });
     req.flash("success", "Added to your wishlist.");
     res.redirect(`/listings/${id}`);
 };
 
 module.exports.removeFavorite = async (req, res) => {
     const { id } = req.params;
-    await User.findByIdAndUpdate(req.user._id, { $pull: { favorites: id } });
+    if (!mongoose.isValidObjectId(id)) {
+        req.flash("error", "Invalid listing id.");
+        return res.redirect("/listings");
+    }
+
+    await User.findByIdAndUpdate(req.user._id, { $pull: { favorites: new mongoose.Types.ObjectId(id) } });
     req.flash("success", "Removed from your wishlist.");
     res.redirect(`/listings/${id}`);
 };

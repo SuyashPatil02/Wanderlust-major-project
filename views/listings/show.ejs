@@ -28,10 +28,12 @@
         <% if(currentUser) { %>
             <% if(isFavorite) { %>
                 <form method="POST" action="/listings/<%= listing._id %>/favorite?_method=DELETE">
+                    <input type="hidden" name="_csrf" value="<%= csrfToken %>">
                     <button class="btn btn-outline-danger">♥ Remove from wishlist</button>
                 </form>
             <% } else { %>
                 <form method="POST" action="/listings/<%= listing._id %>/favorite">
+                    <input type="hidden" name="_csrf" value="<%= csrfToken %>">
                     <button class="btn btn-danger">♥ Save to wishlist</button>
                 </form>
             <% } %>
@@ -40,6 +42,7 @@
         <% if(currentUser && listing.owner._id.equals(currentUser._id)) { %>
             <a href="/listings/<%= listing._id %>/edit" class="btn btn-dark">Edit</a>
             <form method="POST" action="/listings/<%= listing._id %>?_method=DELETE">
+                <input type="hidden" name="_csrf" value="<%= csrfToken %>">
                 <button class="btn btn-outline-dark">Delete</button>
             </form>
         <% } %>
@@ -50,6 +53,7 @@
             <hr />
             <h4>Leave a Review</h4>
             <form action="/listings/<%= listing._id %>/reviews" method="POST" novalidate class="needs-validation">
+                <input type="hidden" name="_csrf" value="<%= csrfToken %>">
                 <div class="mb-3 mt-3">
                     <label for="Rating" class="form-label">Rating</label>
                     <fieldset class="starability-slot mb-3">
@@ -88,6 +92,7 @@
                             <p class="card-text"><%= review.comment %></p>
                             <% if(currentUser && review.author._id.equals(currentUser._id)) { %>
                                 <form class="mb-3" method="POST" action="/listings/<%= listing._id %>/reviews/<%= review._id %>?_method=DELETE">
+                                    <input type="hidden" name="_csrf" value="<%= csrfToken %>">
                                     <button class="btn btn-sm btn-dark">Delete</button>
                                 </form>
                             <% } %>

@@ -5,6 +5,7 @@
         <h2>Create a New Travel Listing</h2>
         <br><br>
         <form method="POST" action="/listings" novalidate class="needs-validation" enctype="multipart/form-data">
+            <input type="hidden" name="_csrf" value="<%= csrfToken %>">
             <div class="mb-3">
                 <label for="title" class="form-label">Enter the Title:</label>
                 <input type="text" name="listing[title]" placeholder="Enter Title" class="form-control" required>

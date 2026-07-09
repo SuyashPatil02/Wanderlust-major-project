@@ -19,6 +19,7 @@ const compression = require("compression");
 const mongoSanitize = require("express-mongo-sanitize");
 const rateLimit = require("express-rate-limit");
 const morgan = require("morgan");
+const csrf = require("csurf");
 
 const ExpressError = require("./utils/ExpressError.js");
 const User = require("./models/user.js");
@@ -120,10 +121,14 @@ passport.use(new LocalStrategy(User.authenticate()));
 passport.serializeUser(User.serializeUser());
 passport.deserializeUser(User.deserializeUser());
 
+const csrfProtection = csrf();
+app.use(csrfProtection);
+
 app.use((req, res, next) => {
     res.locals.success = req.flash("success");
     res.locals.error = req.flash("error");
     res.locals.currentUser = req.user;
+    res.locals.csrfToken = req.csrfToken();
     next();
 });
 
@@ -140,6 +145,11 @@ app.all(/.*/, (req, res, next) => {
 });
 
 app.use((err, req, res, next) => {
+    if (err.code === "EBADCSRFTOKEN") {
+        req.flash("error", "Invalid or expired form token. Please try again.");
+        return res.redirect("back");
+    }
+
     const { statusCode = 500, message = "Something went wrong. Please try again later." } = err;
     res.status(statusCode).render("error.ejs", { statusCode, message });
 });
