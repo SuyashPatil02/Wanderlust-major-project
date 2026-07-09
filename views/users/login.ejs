@@ -1,22 +1,23 @@
 <% layout('layouts/boilerplate') %>
 
-    <div class="row mt-3">
-        <div class="col-md-6 offset-md-3">
-            <h1>Sign In to Wanderlust</h1>
+<div class="row mt-3">
+    <div class="col-md-6 offset-md-3">
+        <h1>Sign In to Wanderlust</h1>
 
-            <form action="/login" method="POST">
+        <form action="/login" method="POST">
+            <input type="hidden" name="_csrf" value="<%= csrfToken %>">
 
-                <div class="mb-3">
-                    <label for="username" class="form-label">Username</label>
-                    <input type="text" class="form-control" id="username" name="username" required>
-                </div>
+            <div class="mb-3">
+                <label for="username" class="form-label">Username</label>
+                <input type="text" class="form-control" id="username" name="username" required>
+            </div>
 
-                <div class="mb-3">
-                    <label for="password" class="form-label">Password</label>
-                    <input type="password" class="form-control" id="password" name="password" required>
-                </div>
+            <div class="mb-3">
+                <label for="password" class="form-label">Password</label>
+                <input type="password" class="form-control" id="password" name="password" required>
+            </div>
 
-                <button type="submit" class="btn btn-success">Sign In</button>
-            </form>
-        </div>
+            <button type="submit" class="btn btn-success">Sign In</button>
+        </form>
     </div>
+</div>

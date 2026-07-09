@@ -3,70 +3,71 @@ const Review = require("./models/review");
 const ExpressError = require("./utils/ExpressError.js");
 const { listingSchema, reviewSchema } = require("./schema.js");
 
-
 module.exports.isLoggedIn = (req, res, next) => {
     if (!req.isAuthenticated()) {
-
-        //redirectUrlS
-        req.session.redirectUrl = req.originalUrl; // Store the original URL the user was trying to access
-        req.flash("error", "You must be logged in to create a new listing!");
+        req.session.redirectUrl = req.originalUrl;
+        req.flash("error", "Please login first.");
         return res.redirect("/login");
     }
     next();
 };
 
-
 module.exports.saveRedirectUrl = (req, res, next) => {
     if (req.session.redirectUrl) {
-        res.locals.redirectUrl = req.session.redirectUrl; // Make the redirect URL available in templates
+        res.locals.redirectUrl = req.session.redirectUrl;
+        delete req.session.redirectUrl;
     }
     next();
 };
 
 module.exports.isOwner = async (req, res, next) => {
-    let { id } = req.params;
-    let listing = await Listing.findById(id);
+    const { id } = req.params;
+    const listing = await Listing.findById(id);
+
+    if (!listing) {
+        req.flash("error", "Listing not found.");
+        return res.redirect("/listings");
+    }
 
     if (!listing.owner.equals(res.locals.currentUser._id)) {
-        req.flash("error", "You are not the owner of this listing!");
+        req.flash("error", "You are not the owner of this listing.");
         return res.redirect(`/listings/${id}`);
+    }
+
+    next();
+};
+
+module.exports.validateListing = (req, res, next) => {
+    const { error } = listingSchema.validate(req.body);
+    if (error) {
+        const errorMessage = error.details.map((el) => el.message).join(", ");
+        throw new ExpressError(400, errorMessage);
     }
     next();
 };
 
-
-
-// Middleware to validate listing data using Joi schema
-module.exports.validateListing = (req, res, next) => {
-    let { error } = listingSchema.validate(req.body);
-
-    if (error) {
-        let errorMessage = error.details.map(el => el.message).join(",");
-        throw new ExpressError(400, errorMessage);
-    } else {
-        next();
-    }
-};
-
-
-// Middleware to validate review data using Joi schema
 module.exports.validateReview = (req, res, next) => {
-    let { error } = reviewSchema.validate(req.body);
+    const { error } = reviewSchema.validate(req.body);
     if (error) {
-        let errorMessage = error.details.map(el => el.message).join(",");
+        const errorMessage = error.details.map((el) => el.message).join(", ");
         throw new ExpressError(400, errorMessage);
-    } else {
-        next();
     }
+    next();
 };
-
 
 module.exports.isReviewAuthor = async (req, res, next) => {
-    let { id, reviewId } = req.params;
-    let review = await Review.findById(reviewId);
-    if (!review.author.equals(res.locals.currentUser._id)) {
-        req.flash("error", "You are not the owner of this review!");
+    const { id, reviewId } = req.params;
+    const review = await Review.findById(reviewId);
+
+    if (!review) {
+        req.flash("error", "Review not found.");
         return res.redirect(`/listings/${id}`);
     }
+
+    if (!review.author.equals(res.locals.currentUser._id)) {
+        req.flash("error", "You are not the owner of this review.");
+        return res.redirect(`/listings/${id}`);
+    }
+
     next();
 };
