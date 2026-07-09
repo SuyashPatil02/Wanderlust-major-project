@@ -135,9 +135,20 @@ module.exports.addFavorite = async (req, res) => {
         return res.redirect("/listings");
     }
 
-    await User.findByIdAndUpdate(req.user._id, { $addToSet: { favorites: new mongoose.Types.ObjectId(id) } });
+    const listing = await Listing.findById(id).select("_id");
+    if (!listing) {
+        req.flash("error", "Listing not found.");
+        return res.redirect("/listings");
+    }
+
+    const user = await User.findById(req.user._id);
+    if (!user.favorites.some((favoriteId) => favoriteId.equals(listing._id))) {
+        user.favorites.push(listing._id);
+        await user.save();
+    }
+
     req.flash("success", "Added to your wishlist.");
-    res.redirect(`/listings/${id}`);
+    res.redirect(`/listings/${listing._id}`);
 };
 
 module.exports.removeFavorite = async (req, res) => {
@@ -147,7 +158,16 @@ module.exports.removeFavorite = async (req, res) => {
         return res.redirect("/listings");
     }
 
-    await User.findByIdAndUpdate(req.user._id, { $pull: { favorites: new mongoose.Types.ObjectId(id) } });
+    const listing = await Listing.findById(id).select("_id");
+    if (!listing) {
+        req.flash("error", "Listing not found.");
+        return res.redirect("/listings");
+    }
+
+    const user = await User.findById(req.user._id);
+    user.favorites = user.favorites.filter((favoriteId) => !favoriteId.equals(listing._id));
+    await user.save();
+
     req.flash("success", "Removed from your wishlist.");
-    res.redirect(`/listings/${id}`);
+    res.redirect(`/listings/${listing._id}`);
 };

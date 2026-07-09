@@ -1,11 +1,5 @@
 const User = require("../models/user.js");
 
-function getSafeRedirectUrl(redirectUrl) {
-    if (typeof redirectUrl !== "string") return "/listings";
-    if (!redirectUrl.startsWith("/") || redirectUrl.startsWith("//")) return "/listings";
-    return redirectUrl;
-}
-
 module.exports.renderSignupForm = (req, res) => {
     res.render("users/signup.ejs");
 };
@@ -36,8 +30,7 @@ module.exports.renderLoginForm = (req, res) => {
 
 module.exports.login = async (req, res) => {
     req.flash("success", "Welcome back! You have successfully logged in.");
-    const redirectUrl = getSafeRedirectUrl(res.locals.redirectUrl);
-    res.redirect(redirectUrl);
+    res.redirect("/listings");
 };
 
 module.exports.logout = (req, res, next) => {
