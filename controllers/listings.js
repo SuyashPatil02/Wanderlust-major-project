@@ -107,15 +107,34 @@ module.exports.renderEditForm = async (req, res) => {
 
 module.exports.updateListing = async (req, res) => {
     const { id } = req.params;
-    const listing = await Listing.findByIdAndUpdate(id, { ...req.body.listing }, { new: true, runValidators: true });
+
+    if (!mongoose.isValidObjectId(id)) {
+        req.flash("error", "Invalid listing id.");
+        return res.redirect("/listings");
+    }
+
+    const listing = await Listing.findById(id);
+    if (!listing) {
+        req.flash("error", "Listing not found.");
+        return res.redirect("/listings");
+    }
+
+    const { title, description, price, location, country } = req.body.listing;
+    listing.title = title;
+    listing.description = description;
+    listing.price = Number(price);
+    listing.location = location;
+    listing.country = country;
+    listing.isFeatured = req.body.listing.isFeatured === "true" || req.body.listing.isFeatured === true;
 
     if (req.file) {
         listing.image = {
             url: req.file.path,
             filename: req.file.filename,
         };
-        await listing.save();
     }
+
+    await listing.save();
 
     req.flash("success", "Successfully updated the listing!");
     res.redirect(`/listings/${id}`);
