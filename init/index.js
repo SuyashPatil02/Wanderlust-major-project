@@ -1,28 +1,39 @@
-const mongoose = require('mongoose');
+if (process.env.NODE_ENV !== "production") {
+    require("dotenv").config();
+}
+
+const mongoose = require("mongoose");
 const initdata = require("./data.js");
 const Listing = require("../models/listing");
+const User = require("../models/user");
 
-const MONGODB_URI = "mongodb://127.0.0.1:27017/wanderlust";
+const MONGODB_URI = process.env.MONGODB_URI || "mongodb://127.0.0.1:27017/wanderlust";
 
 async function main() {
     await mongoose.connect(MONGODB_URI);
     console.log("MongoDB Connected");
 }
 
-main()
-    .then(() => {
-        console.log("Connected to MongoDB");
-    })
-    .catch((err) => console.log(err));
-
 const initDB = async () => {
     await Listing.deleteMany({});
-    console.log("Existing listings deleted");
 
-    initdata.data = initdata.data.map((obj) => ({ ...obj, owner: "6a426eca14abc0a0e74eece5" }));
+    let seedUser = await User.findOne({ username: "demo-owner" });
+    if (!seedUser) {
+        seedUser = new User({ username: "demo-owner", email: "demo-owner@example.com" });
+        await User.register(seedUser, "DemoOwner@123");
+    }
 
-    await Listing.insertMany(initdata.data);
-    console.log("Data was initialized");
-}
+    const seededListings = initdata.data.map((obj, index) => ({
+        ...obj,
+        owner: seedUser._id,
+        isFeatured: index < 6,
+    }));
 
-initDB();
+    await Listing.insertMany(seededListings);
+    console.log("Data initialized successfully");
+};
+
+main()
+    .then(initDB)
+    .catch((err) => console.error(err))
+    .finally(() => mongoose.connection.close());

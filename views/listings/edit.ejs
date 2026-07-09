@@ -1,71 +1,53 @@
-<% layout("/layouts/boilerplate") %>
+<% layout('/layouts/boilerplate') %>
 
-    <div class="row mt-2">
-        <div class="col-md-8 offset-md-2 ">
-            <h2>Edit Travel Listing</h2>
-            <form method="POST" action="/listings/<%= listing._id %>?_method=PUT" novalidate class="needs-validation"
-                enctype="multipart/form-data">
+<div class="row mt-2">
+    <div class="col-md-8 offset-md-2">
+        <h2>Edit Travel Listing</h2>
+        <form method="POST" action="/listings/<%= listing._id %>?_method=PUT" novalidate class="needs-validation" enctype="multipart/form-data">
+            <div class="mb-3">
+                <label for="title" class="form-label">Title</label>
+                <input type="text" name="listing[title]" placeholder="Enter Title" value="<%= listing.title %>" class="form-control" required>
+            </div>
 
-                <div class="mb-3">
-                    <label for="title" class="form-label">Title</label>
-                    <input type="text" name="listing[title]" placeholder="Enter Title" value="<%= listing.title %>"
-                        class="form-control" required>
-                    <div class="valid-feedback">
-                        Title Looks good!
-                    </div>
+            <div class="mb-3">
+                <label for="location" class="form-label">Location</label>
+                <input type="text" name="listing[location]" placeholder="Enter Location" value="<%= listing.location %>" class="form-control" required>
+            </div>
+
+            <div class="mb-3">
+                <label for="description" class="form-label">Description</label>
+                <textarea name="listing[description]" placeholder="Enter Description" class="form-control" required><%= listing.description %></textarea>
+            </div>
+
+            <div class="mb-3">
+                <label for="image" class="form-label">Current Image</label>
+                <br>
+                <img src="<%= listing.image.url %>" alt="<%= listing.title %>" class="img-thumbnail" width="200">
+            </div>
+
+            <div class="mb-3">
+                <label for="image" class="form-label">Upload New Image</label>
+                <input type="file" name="listing[image]" class="form-control">
+            </div>
+
+            <div class="row">
+                <div class="mb-3 col-md-4">
+                    <label for="price" class="form-label">Price in INR</label>
+                    <input type="number" name="listing[price]" min="0" value="<%= listing.price %>" class="form-control" required>
                 </div>
-
-
-                <div class="mb-3">
-                    <label for="location" class="form-label">Location</label>
-                    <input type="text" name="listing[location]" placeholder="Enter Location"
-                        value="<%= listing.location %>" class="form-control" required>
-                    <div class="invalid-feedback">
-                        Please enter a valid location.
-                    </div>
+                <div class="mb-3 col-md-8">
+                    <label for="country" class="form-label">Country</label>
+                    <input type="text" name="listing[country]" value="<%= listing.country %>" class="form-control" required>
                 </div>
+            </div>
 
-                <div class="mb-3">
-                    <label for="description" class="form-label">Description</label>
-                    <textarea name="listing[description]" placeholder="Enter Description" class="form-control"
-                        required><%= listing.description %></textarea>
-                    <div class="invalid-feedback">
-                        Please enter a valid description.
-                    </div>
-                </div>
+            <div class="form-check mb-3">
+                <input class="form-check-input" type="checkbox" value="true" id="isFeatured" name="listing[isFeatured]" <%= listing.isFeatured ? 'checked' : '' %>>
+                <label class="form-check-label" for="isFeatured">Mark as featured listing</label>
+            </div>
 
-                <div class="mb-3">
-                    <label for="image" class="form-label">Current Image</label>
-                    <br>
-                    <img src="<%= listing.image.url %>" alt="<%= listing.title %>" class="img-thumbnail" width="200">
-                </div>
-
-                <div class="mb-3">
-                    <label for="image" class="form-label">Upload New Image</label>
-                    <input type="file" name="listing[image]" placeholder="Enter Image file" class="form-control">
-                </div>
-
-                <div class="row">
-                    <div class="mb-3 col-md-4">
-                        <label for="price" class="form-label">Price in INR</label>
-                        <input type="number" name="listing[price]" placeholder="Enter Price in INR"
-                            value="<%= listing.price %>" class="form-control" required>
-                        <div class="invalid-feedback">
-                            Please enter a valid price.
-                        </div>
-                    </div>
-
-                    <div class="mb-3 col-md-8">
-                        <label for="country" class="form-label">Country</label>
-                        <input type="text" name="listing[country]" placeholder="Enter Country"
-                            value="<%= listing.country %>" class="form-control" required>
-                        <div class="invalid-feedback">
-                            Please enter a valid country.
-                        </div>
-                    </div>
-                </div>
-                <button class="btn btn-dark edit-btn mt-3">Update Listing</button>
-                <br><br>
-            </form>
-        </div>
+            <button class="btn btn-dark edit-btn mt-3">Update Listing</button>
+            <br><br>
+        </form>
     </div>
+</div>

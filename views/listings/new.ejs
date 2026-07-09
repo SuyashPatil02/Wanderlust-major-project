@@ -1,73 +1,46 @@
 <% layout('layouts/boilerplate') %>
-    <div class="row mt-2">
-        <div class="col-8 offset-2">
-            <br>
-            <h2>Create a New Travel Listing</h2>
+<div class="row mt-2">
+    <div class="col-8 offset-2">
+        <br>
+        <h2>Create a New Travel Listing</h2>
+        <br><br>
+        <form method="POST" action="/listings" novalidate class="needs-validation" enctype="multipart/form-data">
+            <div class="mb-3">
+                <label for="title" class="form-label">Enter the Title:</label>
+                <input type="text" name="listing[title]" placeholder="Enter Title" class="form-control" required>
+            </div>
+            <div class="mb-3">
+                <label for="location" class="form-label">Enter the Location:</label>
+                <input type="text" name="listing[location]" placeholder="Solapur, Pune, Mumbai" class="form-control" required>
+            </div>
+            <div class="mb-3">
+                <label for="description" class="form-label">Enter the Description:</label>
+                <textarea name="listing[description]" placeholder="Enter Description" class="form-control" required></textarea>
+            </div>
+
+            <div class="mb-3">
+                <label for="image" class="form-label">Upload listing image file</label>
+                <input type="file" name="listing[image]" class="form-control">
+            </div>
+
+            <div class="row">
+                <div class="mb-3 col-md-4">
+                    <label for="price" class="form-label">Enter the Price:</label>
+                    <input name="listing[price]" type="number" min="0" placeholder="1200" class="form-control" required>
+                </div>
+                <div class="mb-3 col-md-8">
+                    <label for="country" class="form-label">Enter the Country:</label>
+                    <input type="text" name="listing[country]" placeholder="India" class="form-control" required>
+                </div>
+            </div>
+
+            <div class="form-check mb-3">
+                <input class="form-check-input" type="checkbox" value="true" id="isFeatured" name="listing[isFeatured]">
+                <label class="form-check-label" for="isFeatured">Mark as featured listing</label>
+            </div>
+
+            <button class="btn btn-dark add-btn mt-3">Add Listing</button>
             <br><br>
-            <form method="POST" action="/listings" novalidate class="needs-validation" enctype="multipart/form-data">
-
-                <div class="mb-3">
-                    <lable for="title" class="form-label">
-                        Enter the Title:
-                    </lable>
-                    <input type="text" name="listing[title]" placeholder="Enter Title" class="form-control" required>
-                    <div class="valid-feedback">
-                        Title Looks good!
-                    </div>
-                </div>
-                <div class="mb-3">
-                    <lable for="location" class="form-label">
-                        Enter the Location:
-                    </lable>
-                    <input type="text" name="listing[location]" placeholder="Solapur,pune,mumbai" class="form-control"
-                        required>
-                    <div class="invalid-feedback">
-                        Please enter a valid location.
-                    </div>
-                </div>
-                <div class="mb-3">
-                    <lable for="description" class="form-label">
-                        Enter the Description:
-                    </lable>
-                    <textarea type="text" name="listing[description]" placeholder="Enter Description"
-                        class="form-control" required></textarea>
-                    <div class="invalid-feedback">
-                        Please enter a valid description.
-                    </div>
-                </div>
-
-
-                <div class="mb-3">
-                    <lable for="image" class="form-label">
-                        Upload listing image file
-                    </lable>
-                    <input type="file" name="listing[image]" placeholder="Enter Image file" class="form-control"
-                        required>
-                </div>
-
-
-                <div class="row">
-                    <div class="mb-3 col-md-4">
-                        <lable for="price" class="form-label">
-                            Enter the Price:
-                        </lable>
-                        <input name="listing[price]" placeholder="1200" class="form-control" required>
-                        <div class="invalid-feedback">
-                            Please enter a valid price.
-                        </div>
-                    </div>
-                    <div class="mb-3 col-md-8">
-                        <lable for="country" class="form-label">
-                            Enter the Country:
-                        </lable>
-                        <input type="text" name="listing[country]" placeholder="India" class="form-control" required>
-                        <div class="invalid-feedback">
-                            Please enter a valid country.
-                        </div>
-                    </div>
-                </div>
-                <button class="btn btn-dark add-btn mt-3">Add Listing</button>
-                <br><br>
-            </form>
-        </div>
+        </form>
     </div>
+</div>
