@@ -1,5 +1,4 @@
-# Wanderlust Major Project (Production-Ready Edition)
-
+# Wanderlust Major Project 
 A modernized MERN-style travel listing platform inspired by Airbnb, upgraded with production security, improved architecture, advanced filtering, featured listings, and wishlist capabilities.
 
 ## Highlights
